@@ -10,6 +10,8 @@ public enum Mode {
 
     CIPHER_BLOCK_CHAINING("CBC"),
 
+    GALOIS_COUNTER("GCM"),
+
     CIPHER_FEEDBACK("CFB"),
 
     OUTPUT_FEEDBACK("OFB"),
