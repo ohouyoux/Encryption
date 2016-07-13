@@ -1,9 +1,12 @@
 package be.nitroxis.security;
 
+import com.google.common.base.Optional;
+
 import net.jcip.annotations.ThreadSafe;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import java.security.GeneralSecurityException;
 
@@ -35,8 +38,24 @@ class DefaultEncrypter implements Encrypter<byte[], byte[], GeneralSecurityExcep
     @Override
     public byte[] encrypt(final byte[] message) throws GeneralSecurityException {
         checkNotNull(message, "Plaintext message should not be null");
-        cipher.init(Cipher.ENCRYPT_MODE, key);
+        Optional<byte[]> iv = getIv();
+
+        if (iv.isPresent()) {
+            IvParameterSpec spec = new IvParameterSpec(iv.get());
+            cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+        } else {
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+        }
 
         return cipher.doFinal(message);
+    }
+
+    /**
+     * Creates an initialization vector.
+     *
+     * @return the properly initialized vector
+     */
+    protected Optional<byte[]> getIv() {
+        return Optional.absent();
     }
 }
