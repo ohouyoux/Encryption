@@ -53,7 +53,7 @@ public class EncryptionAlgorithmFactory
         Cipher cipher = Cipher.getInstance(transformation);
 
         DefaultEncrypter encrypter = new DefaultEncrypter(key, cipher);
-        Decrypter<byte[], byte[], GeneralSecurityException> decrypter = new DefaultDecrypter(key, cipher);;
+        Decrypter<byte[], byte[], GeneralSecurityException> decrypter = new DefaultDecrypter(key, cipher);
 
         return new SymmetricEncryptionAlgorithm<>(encrypter, decrypter);
     }
