@@ -5,12 +5,15 @@ import net.jcip.annotations.ThreadSafe;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+
 import java.security.GeneralSecurityException;
+import java.security.spec.AlgorithmParameterSpec;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Helps to correctly instantiate new {@code SymmetricEncryptionAlgorithm} objects for a given encryption {@code Algorithm}.
+ * Helps to correctly instantiate new {@code SymmetricEncryptionAlgorithm} objects for a given encryption
+ * {@code Algorithm}.
  *
  * @author Olivier Houyoux
  */
@@ -41,13 +44,13 @@ public class EncryptionAlgorithmFactory
     public SymmetricEncryptionAlgorithm<byte[], byte[], GeneralSecurityException> newInstance()
             throws GeneralSecurityException {
 
-        String name = algorithm.name();
-        KeyGenerator generator = KeyGenerator.getInstance(name);
-        SecretKey key = generator.generateKey();
-        Cipher cipher = new CipherBuilder().withAlgorithm(algorithm).withMode(mode).withPadding(padding).build();
-
-        DefaultEncrypter encrypter = new DefaultEncrypter(key, cipher);
-        Decrypter<byte[], byte[], GeneralSecurityException> decrypter = new DefaultDecrypter(key, cipher);
+        SecretKey key = new SecretKeyBuilder().withAlgorithm(algorithm).build();
+        Factory<AlgorithmParameterSpec, RuntimeException> factory = new AlgorithmParameterSpecFactory(mode);
+        AlgorithmParameterSpec specification = factory.newInstance();
+        Encrypter<byte[], byte[], GeneralSecurityException> encrypter =
+                new DefaultEncrypter(key, algorithm, mode, padding, specification);
+        Decrypter<byte[], byte[], GeneralSecurityException> decrypter =
+                new DefaultDecrypter(key, algorithm, mode, padding, specification);
 
         return new SymmetricEncryptionAlgorithm<>(encrypter, decrypter);
     }
