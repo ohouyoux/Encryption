@@ -44,13 +44,7 @@ public class EncryptionAlgorithmFactory
         String name = algorithm.name();
         KeyGenerator generator = KeyGenerator.getInstance(name);
         SecretKey key = generator.generateKey();
-        String transformation = new StringBuilder(name)
-                .append('/')
-                .append(mode.getName())
-                .append('/')
-                .append(padding.getName())
-                .toString();
-        Cipher cipher = Cipher.getInstance(transformation);
+        Cipher cipher = new CipherBuilder().withAlgorithm(algorithm).withMode(mode).withPadding(padding).build();
 
         DefaultEncrypter encrypter = new DefaultEncrypter(key, cipher);
         Decrypter<byte[], byte[], GeneralSecurityException> decrypter = new DefaultDecrypter(key, cipher);
