@@ -1,8 +1,10 @@
 package be.nitroxis.security;
 
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 
 import java.security.GeneralSecurityException;
+import java.security.spec.AlgorithmParameterSpec;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,6 +20,12 @@ public class CipherBuilder implements Builder<Cipher, GeneralSecurityException> 
     private Mode mode;
 
     private Padding padding;
+
+    private SecretKey key;
+
+    private int opmode;
+
+    private AlgorithmParameterSpec specification;
 
     /**
      * Configures this {@code CipherBuilder} with a given {@code Algorithm}.
@@ -54,6 +62,43 @@ public class CipherBuilder implements Builder<Cipher, GeneralSecurityException> 
 
         return this;
     }
+
+    /**
+     * Configures this {@code CipherBuilder} with a given operation mode.
+     *
+     * @param opmode the new operation mode
+     * @return the {@code CipherBuilder} configured with the given {@code opmode}
+     */
+    public CipherBuilder withOperationMode(final int opmode) {
+        this.opmode = opmode;
+
+        return this;
+    }
+
+    /**
+     * Configures this {@code CipherBuilder} with a given {@code SecretKey}.
+     *
+     * @param key the {@code SecretKey}
+     * @return this {@code CipherBuilder} configured with the given {@code SecretKey}
+     */
+    public CipherBuilder withKey(final SecretKey key) {
+        this.key = checkNotNull(key, "Secret key should not be null");
+
+        return this;
+    }
+
+    /**
+     * Configures this {@code CipherBuilder} with a given {@code AlgorithmParameterSpec}.
+     *
+     * @param specification the {@code AlgorithmParameterSpec}
+     * @return this {@code CipherBuilder} configured with the given {@code AlgorithmParameterSpec}
+     */
+    public CipherBuilder withSpecification(final AlgorithmParameterSpec specification) {
+        this.specification = checkNotNull(specification, "Algorithm specification should not be null");
+
+        return this;
+    }
+
     @Override
     public Cipher build() throws GeneralSecurityException {
         String transformation = new StringBuilder(algorithm.name())
@@ -62,7 +107,9 @@ public class CipherBuilder implements Builder<Cipher, GeneralSecurityException> 
                 .append('/')
                 .append(padding.getName())
                 .toString();
+        Cipher cipher = Cipher.getInstance(transformation);
+        cipher.init(opmode, key, specification);
 
-        return Cipher.getInstance(transformation);
+        return cipher;
     }
 }
