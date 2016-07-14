@@ -1,6 +1,10 @@
 package be.nitroxis.security;
 
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -10,7 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Olivier Houyoux
  */
-public class AlgorithmParameterSpecFactory implements Factory<AlgorithmParameterSpec, RuntimeException> {
+public class AlgorithmParameterSpecFactory implements Factory<AlgorithmParameterSpec, GeneralSecurityException> {
 
     private final Mode mode;
 
@@ -24,17 +28,26 @@ public class AlgorithmParameterSpecFactory implements Factory<AlgorithmParameter
     }
 
     @Override
-    public AlgorithmParameterSpec newInstance() {
+    public AlgorithmParameterSpec newInstance() throws GeneralSecurityException {
         AlgorithmParameterSpec spec;
+
+        // We need to ensure that the same PRNG is used no matter where the code is running, hence we specify the
+        // algorithm (> SHA1PRNG on Windows, NativePRNG on Linux)
+        // We must never call setSeed() on the SecureRandom to inadvertently provide a predictable seed
+        // But it could be more secure to periodically call setSeed(random.generateSeed(int))
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+        byte[] iv;
 
         switch(mode) {
             case GALOIS_COUNTER:
-                throw new UnsupportedOperationException();
-                //break;
+                iv = new byte[12];
+                random.nextBytes(iv);
+                spec = new GCMParameterSpec(16 * 8, iv);
+                break;
 
             default:
-                // TODO implement the default behavior the right way
-                byte[] iv = null;
+                iv = new byte[16];
+                random.nextBytes(iv);
                 spec = new IvParameterSpec(iv);
         }
 
