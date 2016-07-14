@@ -1,7 +1,7 @@
 package be.nitroxis.security;
 
 /**
- * Lists the different {@code SymmetricEncryptionAlgorithm}s that have been implemented.
+ * Lists the different {@code EncryptionAlgorithm}s that have been implemented.
  *
  * @author Olivier Houyoux
  */

@@ -10,7 +10,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Helps to correctly instantiate new {@code SymmetricEncryptionAlgorithm} objects for a given encryption
+ * Helps to correctly instantiate new {@code EncryptionAlgorithm} objects for a given encryption
  * {@code Algorithm}.
  *
  * @author Olivier Houyoux
@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ThreadSafe
 public class EncryptionAlgorithmFactory
         implements Factory<
-            SymmetricEncryptionAlgorithm<byte[], byte[], GeneralSecurityException>,
+        EncryptionAlgorithm<byte[], byte[], GeneralSecurityException>,
             GeneralSecurityException> {
 
     private final Algorithm algorithm;
@@ -39,7 +39,7 @@ public class EncryptionAlgorithmFactory
     }
 
     @Override
-    public SymmetricEncryptionAlgorithm<byte[], byte[], GeneralSecurityException> newInstance()
+    public EncryptionAlgorithm<byte[], byte[], GeneralSecurityException> newInstance()
             throws GeneralSecurityException {
 
         SecretKey key = new SecretKeyBuilder().withAlgorithm(algorithm).build();
@@ -50,6 +50,6 @@ public class EncryptionAlgorithmFactory
         Decrypter<byte[], byte[], GeneralSecurityException> decrypter =
                 new DefaultDecrypter(key, algorithm, mode, padding, specification);
 
-        return new SymmetricEncryptionAlgorithm<>(encrypter, decrypter);
+        return new EncryptionAlgorithm<>(encrypter, decrypter);
     }
 }

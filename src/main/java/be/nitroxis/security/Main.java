@@ -19,10 +19,10 @@ public class Main {
     }
 
     public static void main(final String[] args) throws Exception {
-        Factory<SymmetricEncryptionAlgorithm<byte[], byte[], GeneralSecurityException>,
+        Factory<EncryptionAlgorithm<byte[], byte[], GeneralSecurityException>,
                 GeneralSecurityException> factory =
                 new EncryptionAlgorithmFactory(Algorithm.AES, Mode.GALOIS_COUNTER, Padding.NO_PADDING);
-        SymmetricEncryptionAlgorithm<byte[], byte[], GeneralSecurityException> algorithm = factory.newInstance();
+        EncryptionAlgorithm<byte[], byte[], GeneralSecurityException> algorithm = factory.newInstance();
 
         String message = "This is a test";
 System.out.println("Plaintext: " + message);
