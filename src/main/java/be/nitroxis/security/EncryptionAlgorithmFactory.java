@@ -2,8 +2,6 @@ package be.nitroxis.security;
 
 import net.jcip.annotations.ThreadSafe;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import java.security.GeneralSecurityException;
@@ -45,7 +43,7 @@ public class EncryptionAlgorithmFactory
             throws GeneralSecurityException {
 
         SecretKey key = new SecretKeyBuilder().withAlgorithm(algorithm).build();
-        Factory<AlgorithmParameterSpec, RuntimeException> factory = new AlgorithmParameterSpecFactory(mode);
+        Factory<AlgorithmParameterSpec, GeneralSecurityException> factory = new AlgorithmParameterSpecFactory(mode);
         AlgorithmParameterSpec specification = factory.newInstance();
         Encrypter<byte[], byte[], GeneralSecurityException> encrypter =
                 new DefaultEncrypter(key, algorithm, mode, padding, specification);
