@@ -21,7 +21,7 @@ public class Main {
     public static void main(final String[] args) throws Exception {
         Factory<SymmetricEncryptionAlgorithm<byte[], byte[], GeneralSecurityException>,
                 GeneralSecurityException> factory =
-                new EncryptionAlgorithmFactory(Algorithm.AES, Mode.CIPHER_BLOCK_CHAINING, Padding.PKCS7);
+                new EncryptionAlgorithmFactory(Algorithm.AES, Mode.GALOIS_COUNTER, Padding.NO_PADDING);
         SymmetricEncryptionAlgorithm<byte[], byte[], GeneralSecurityException> algorithm = factory.newInstance();
 
         String message = "This is a test";
